@@ -3,15 +3,8 @@ set -e
 
 echo "Preparing application files..."
 
-# Копируем классы из out/
-mkdir -p /app/out
-cp -r out/* /app/out/
-
-# Копируем статические файлы в out/static
+# Копируем статические файлы в out/static (если нет)
 mkdir -p out/static
-cp -r src/main/resources/static/* out/static/
-
-# Копируем обновлённые статические файлы
-cp -r out/static/* /app/out/static/
+cp -r src/main/resources/static/* out/static/ 2>/dev/null || true
 
 echo "Build successful!"
