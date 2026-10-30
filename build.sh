@@ -1,13 +1,17 @@
 #!/bin/bash
 set -e
 
-echo "Copying pre-compiled files..."
+echo "Preparing application files..."
 
-# Копируем классы
-cp -r out/* /app/ 2>/dev/null || true
+# Копируем классы из out/
+mkdir -p /app/out
+cp -r out/* /app/out/
 
-# Копируем статические файлы
+# Копируем статические файлы в out/static
 mkdir -p out/static
-cp -r src/main/resources/static/* out/static/ 2>/dev/null || true
+cp -r src/main/resources/static/* out/static/
+
+# Копируем обновлённые статические файлы
+cp -r out/static/* /app/out/static/
 
 echo "Build successful!"
