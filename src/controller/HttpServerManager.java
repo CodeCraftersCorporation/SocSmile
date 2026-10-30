@@ -7,13 +7,19 @@ import api.ProfileHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.net.URI;
 import java.net.URL;
+import java.net.JarURLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class HttpServerManager {
     private static final int PORT = Integer.parseInt(System.getenv().getOrDefault("PORT", "8080"));
@@ -31,42 +37,51 @@ public class HttpServerManager {
             URL staticUrl = HttpServerManager.class.getResource(STATIC_CLASSPATH);
             if (staticUrl != null) {
                 if ("file".equals(staticUrl.getProtocol())) {
-                    STATIC_DIR = staticUrl.toURI().toPath();
+                    STATIC_DIR = Paths.get(staticUrl.toURI());
                     System.out.println("[Static] Loaded from: " + STATIC_DIR);
-                } else {
+                } else if ("jar".equals(staticUrl.getProtocol())) {
                     // JAR — копируем в temp
                     STATIC_DIR = extractFromClasspath(staticUrl);
                     System.out.println("[Static] Extracted to temp: " + STATIC_DIR);
+                } else {
+                    STATIC_DIR = Paths.get(staticUrl.toURI());
+                    System.out.println("[Static] Loaded from: " + STATIC_DIR);
                 }
             } else {
                 // Фоллбэк — файловая система
-                STATIC_DIR = Path.of("src/main/resources/static");
+                STATIC_DIR = Paths.get("src/main/resources/static");
                 System.out.println("[Static] Using filesystem: " + STATIC_DIR);
             }
         } catch (Exception e) {
-            STATIC_DIR = Path.of("src/main/resources/static");
-            System.out.println("[Static] Fallback to: " + STATIC_DIR);
+            STATIC_DIR = Paths.get("src/main/resources/static");
+            System.out.println("[Static] Fallback to: " + STATIC_DIR + " error: " + e.getMessage());
         }
     }
 
     private static Path extractFromClasspath(URL url) throws IOException {
         Path temp = Files.createTempDirectory("socsmile-static");
-        copyFromJar(url, temp);
-        return temp;
-    }
-
-    private static void copyFromJar(URL url, Path target) throws IOException {
-        if (url.getProtocol().equals("jar")) {
-            try (var is = url.openStream()) {
-                Files.copy(is, target.resolve("index.html"));
+        
+        // Извлекаем все файлы из JAR
+        JarURLConnection conn = (JarURLConnection) url.openConnection();
+        try (JarFile jarFile = conn.getJarFile()) {
+            String entryPrefix = STATIC_CLASSPATH.substring(1); // убираем ведущий /
+            
+            for (java.util.Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements(); ) {
+                JarEntry entry = e.nextElement();
+                if (entry.getName().startsWith(entryPrefix)) {
+                    Path filePath = temp.resolve(entry.getName().substring(entryPrefix.length()));
+                    if (entry.isDirectory()) {
+                        filePath.toFile().mkdirs();
+                    } else {
+                        Files.createDirectories(filePath.getParent());
+                        try (InputStream is = jarFile.getInputStream(entry)) {
+                            Files.copy(is, filePath);
+                        }
+                    }
+                }
             }
-        } else {
-            Files.copy(url.openStream(), target.resolve("index.html"));
         }
-        // Копируем все файлы из директории
-        java.nio.file.Files.list(target)
-            .filter(p -> p.toFile().isFile())
-            .forEach(p -> {});
+        return temp;
     }
 
     private static final Map<String, String> MIME_TYPES = new HashMap<>();
