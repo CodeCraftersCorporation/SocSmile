@@ -1,0 +1,136 @@
+/* ===== Profile Header ===== */
+.profile-header {
+    text-align: center;
+    padding: 32px 20px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border-radius: var(--radius) var(--radius) 0 0;
+    color: white;
+}
+
+.profile-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 4px solid rgba(255,255,255,0.4);
+    object-fit: cover;
+    margin: 0 auto 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.profile-name {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.profile-username {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-bottom: 8px;
+}
+
+.profile-bio {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.profile-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 20px;
+    background: white;
+    border-bottom: 1px solid var(--border);
+}
+
+.profile-stat-number {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--primary);
+}
+
+.profile-stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+/* ===== Profile Content ===== */
+.profile-content {
+    background: white;
+    border-radius: 0 0 var(--radius) var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.profile-tabs {
+    display: flex;
+    border-bottom: 2px solid var(--border);
+}
+
+.profile-tab {
+    flex: 1;
+    padding: 16px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    position: relative;
+}
+
+.profile-tab.active {
+    color: var(--primary);
+}
+
+.profile-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--primary);
+    border-radius: 3px 3px 0 0;
+}
+
+.profile-tab:hover {
+    color: var(--primary);
+    background: var(--bg);
+}
+
+/* ===== Edit Profile ===== */
+.edit-profile-form {
+    padding: 24px;
+}
+
+.avatar-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.avatar-upload .preview {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 12px;
+    border: 3px solid var(--border);
+}
+
+/* ===== My Profile Page ===== */
+.my-profile-header {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 20px;
+}

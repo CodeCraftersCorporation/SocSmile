@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лента — SocSmile</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/feed.css">
+</head>
+<body>
+<nav class="navbar">
+    <a href="feed.html" class="navbar-brand">Soc<span>Smile</span></a>
+    <div class="navbar-user">
+        <img id="navAvatar" class="navbar-avatar" src="" alt="">
+        <span id="navUsername" class="navbar-username"></span>
+        <button id="logoutBtn" class="navbar-logout">Выйти</button>
+    </div>
+</nav>
+
+<div class="container">
+    <!-- Stats -->
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-number" id="postCount">0</div>
+            <div class="stat-label">Постов</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" id="likeCount">0</div>
+            <div class="stat-label">Лайков</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" id="userCount">0</div>
+            <div class="stat-label">Пользователей</div>
+        </div>
+    </div>
+
+    <!-- Post Creator -->
+    <div class="post-creator">
+        <div class="card">
+            <div class="post-creator-header">
+                <img id="creatorAvatar" class="post-creator-avatar" src="" alt="">
+                <textarea id="postText" placeholder="Что у вас нового?" rows="2"></textarea>
+            </div>
+            <div class="post-creator-footer">
+                <span class="char-count" id="charCount">0/500</span>
+                <button id="postBtn" class="btn btn-primary btn-sm">Опубликовать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Posts Feed -->
+    <div id="feed">
+        <div class="feed-loading">
+            <div class="spinner"></div>
+            <p>Загрузка...</p>
+        </div>
+    </div>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/api.js"></script>
+<script src="js/feed.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    auth.requireAuth();
+    feed.init();
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        auth.logout();
+    });
+});
+</script>
+</body>
+</html>
