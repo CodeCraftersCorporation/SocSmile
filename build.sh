@@ -1,14 +1,21 @@
 #!/bin/bash
 set -e
 
-# Скачиваем JDK 21
-JDK_URL="https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.7%2B7/OpenJDK21U-jdk_x64_linux_hotspot_21.0.7_7.tar.gz"
+# Скачиваем JDK 21 через Adoptium API
 JDK_DIR="$HOME/.local/jdk"
-JDK_FILE="/tmp/jdk.tar.gz"
+OS="linux"
+ARCH="x64"
+JDK_VERSION="21.0.7+7"
 
 if [ ! -d "$JDK_DIR" ]; then
   echo "Downloading JDK 21..."
-  curl -sL "$JDK_URL" -o "$JDK_FILE"
+  # Получаем прямую ссылку через API
+  DOWNLOAD_URL=$(curl -sL "https://api.adoptium.net/v3/assets/latest/21/hotspot?architecture=$ARCH&os=$OS&image_type=jdk&vendor=eclipse" | grep -o '"binaries.*download_link[^"]*"' | grep -o 'https://[^"]*')
+  echo "Download URL: $DOWNLOAD_URL"
+  
+  JDK_FILE="/tmp/jdk.tar.gz"
+  curl -sL "$DOWNLOAD_URL" -o "$JDK_FILE"
+  
   mkdir -p "$JDK_DIR"
   tar -xzf "$JDK_FILE" -C "$JDK_DIR" --strip-components=1
   rm "$JDK_FILE"
